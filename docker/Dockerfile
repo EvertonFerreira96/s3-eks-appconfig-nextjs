@@ -28,11 +28,11 @@ RUN \
     if [ -f yarn.lock ]; then yarn build; \
     elif [ -f package-lock.json ]; then npm run build; \
     elif [ -f yarn-lock.yaml ]; then yarn build; \
-    else yarn build; \
+    else yarn build && echo .env; \
     fi
-
 # 3. Production image, copy all the files and run next
 FROM base AS runner
+
 WORKDIR /app
 
 RUN addgroup -g 1001 -S docker
