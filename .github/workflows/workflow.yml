@@ -1,10 +1,6 @@
 name: Build and Deploy to EKS -- Production
 
-on:
-  push:
-    branches: ["master"]
-  pull_request:
-    branches: ["production"]
+on: push
 
 # Set the all env values in the GithubAction secrets.
 # https://github.com/[organization]/[project]/settings/secrets/actions
