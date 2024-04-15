@@ -25,11 +25,11 @@ jobs:
 
     # Build Scope envs
     env:
-      CLUSTER_NAME: helper-center
-      ECR_REPOSITORY: helper-center
+      CLUSTER_NAME: shop
+      ECR_REPOSITORY: shop
       IMAGE_TAG: ${{ github.sha }}
-      RELEASE_NAME: helper-center
-      NAMESPACE: helper-center
+      RELEASE_NAME: shop
+      NAMESPACE: shop
       HELM_CHART: ./chart # helm chart dir, under the project root/chart
       # Project sensitive env values
       CONTENTFUL_SPACE_ID: ${{ secrets.CONTENTFUL_SPACE_ID }}
