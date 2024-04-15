@@ -1,0 +1,86 @@
+name: Build and Deploy to EKS -- Production
+
+on:
+  push:
+    branches: ["production"]
+  pull_request:
+    branches: ["production"]
+
+# Set the all env values in the GithubAction secrets.
+# https://github.com/[organization]/[project]/settings/secrets/actions
+# workflow scope envs so that the values could be used in the whole workflow.
+env:
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  # Like: account_id.dkr.ecr.us-east-2.amazonaws.com
+  ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+  ALB_ACM_ARN: ${{ secrets.ALB_ACM_ARN }}
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read # This is required for actions/checkout
+
+jobs:
+  build:
+    if: github.ref == 'refs/heads/production'
+    runs-on: ubuntu-latest
+
+    # Build Scope envs
+    env:
+      CLUSTER_NAME: helper-center
+      ECR_REPOSITORY: helper-center
+      IMAGE_TAG: ${{ github.sha }}
+      RELEASE_NAME: helper-center
+      NAMESPACE: helper-center
+      HELM_CHART: ./chart # helm chart dir, under the project root/chart
+      # Project sensitive env values
+      CONTENTFUL_SPACE_ID: ${{ secrets.CONTENTFUL_SPACE_ID }}
+      CONTENTFUL_ACCESS_TOKEN: ${{ secrets.CONTENTFUL_ACCESS_TOKEN }}
+
+    steps:
+      # Checkout the code from GitHub
+      # I believe all the CI/CD would come with this step.
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Communicate the GitHub Action secrets within your project to set up sensitive credentials.
+      - name: Add executable permission to build script
+        run: chmod +x scripts/build.sh
+
+      - name: Run build.sh to update the .env file
+        run: ./scripts/build.sh
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: "latest" # default is latest stable
+        id: install-kubectl
+
+      - name: Install helm
+        uses: azure/setup-helm@v3
+        with:
+          version: "v3.11.1" # default is latest (stable)
+          #token: ${{ secrets.GITHUB_TOKEN }} # only needed if version is 'latest'
+        id: install-helm
+
+      - name: Configure AWS Credentials
+        id: aws-login
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to AWS ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        run: |
+          # Build a docker container and push it to ECR
+          docker build -f docker/Dockerfile -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
