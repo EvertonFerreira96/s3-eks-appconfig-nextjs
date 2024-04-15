@@ -4,6 +4,7 @@ import { z } from 'zod'
 export const env = createEnv({
   server: {
     APP_URL: z.string().url(),
+    API_URL: z.string().url(),
     AWS_APPCONFIG_NAME: z.string(),
     AWS_SESSION_TOKEN: z.string().nullable(),
     AWS_REGION: z.string(),
@@ -14,12 +15,15 @@ export const env = createEnv({
   },
 
   client: {
-    NEXT_PUBLIC_API_BASE_URL: z.string().url(),
+    NEXT_PUBLIC_APP_URL: z.string().url(),
+    NEXT_PUBLIC_API_URL: z.string().url(),
   },
 
   runtimeEnv: {
-    APP_URL: process.env.APP_URL,
-    NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
+    API_URL: process.env.NEXT_PUBLIC_API_URL,
+    APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
     AWS_APPCONFIG_NAME: process.env.AWS_APPCONFIG_NAME,
     AWS_SESSION_TOKEN: process.env.AWS_SESSION_TOKEN,
     AWS_REGION: process.env.AWS_REGION,
