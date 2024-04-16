@@ -1,0 +1,44 @@
+#file: noinspection YAMLSchemaValidation
+# nonk8s
+#file: noinspection YAMLS#file: noinspection YAMLSchemaValidation
+## An example of ClusterConfig object with custom VPC IPv4 CIDR,
+## and auto-allocated IPv6 CIDRs for all subnets; also without
+## any nodegroups:
+#---
+#apiVersion: eksctl.io/v1alpha5
+#kind: ClusterConfigchemaValidation
+# An example of ClusterConfig object with custom VPC IPv4 CIDR,
+# and auto-allocated IPv6 CIDRs for all subnets; also without
+# any nodegroups:
+---
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: shop-cluster # Cluster name
+  region: us-east-2
+
+# The "managedNodeGroups" will be good for most cases
+managedNodeGroups:
+  - name: ng-helper-center # NodeGroup name
+    # You can use either instanceType or instanceSelector
+    instanceType: t3.medium
+    # Check the aws instance types here:
+    # https://aws.amazon.com/ec2/instance-types/
+    # instanceSelector:
+    #   vCPUs: 2
+    #   memory: 4GiB #
+    #   cpuArchitecture: x86_64 # default value
+    desiredCapacity: 1
+    volumeSize: 30
+    ssh:
+      allow: true
+      # Create the public key from AWS key pair if you want to access the instance in the future
+      # https://us-east-2.console.aws.amazon.com/ec2/home?region=us-east-2#KeyPairs:
+      publicKeyName: PemKey
+    iam:
+      withAddonPolicies:
+        # Add the AutoScaling Support
+        # You would see the created auto-scaling group in
+        # https://us-east-2.console.aws.amazon.com/ec2/home?region=us-east-2#AutoScalingGroups:
+        autoScaler: true
