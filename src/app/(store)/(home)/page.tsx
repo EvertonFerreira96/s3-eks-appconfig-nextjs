@@ -1,10 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { api } from '@/data/api'
 import { Product } from '@/data/types/product'
 import { params } from '@/params'
 import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { NextRequest } from 'next/server'
 
 /**
  * Cache & Memoization
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   title: 'Home',
 }
 
-export default async function Home(request: Request) {
+export default async function Home(request: any) {
   const [highlightedProduct, ...otherProducts] = await getFeaturedProducts()
 
   const { searchParams } = request
@@ -38,6 +38,9 @@ export default async function Home(request: Request) {
       `${params.aws.cloudFront.whitelabelApi.bucket}/${domain}.json`,
       {
         method: 'GET',
+        next: {
+          revalidate: 60 * 60, // 1 hour
+        },
       },
     )
   ).json()
