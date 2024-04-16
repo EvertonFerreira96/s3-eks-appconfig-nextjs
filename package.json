@@ -12,6 +12,7 @@
     "@aws-sdk/client-appconfig": "^3.540.0",
     "@aws-sdk/client-appconfigdata": "^3.540.0",
     "@t3-oss/env-nextjs": "^0.7.1",
+    "aws-sdk": "^2.1599.0",
     "date-fns": "^3.6.0",
     "lucide-react": "^0.288.0",
     "next": "13.5.6",

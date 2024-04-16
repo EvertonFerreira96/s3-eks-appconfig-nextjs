@@ -73,7 +73,7 @@ export const GetAWSAppConfigWhitelabelProfiles = async (): Promise<IAWSAppConfig
 
                 return [
                     profile.Name!,
-                    JSON.parse(new TextDecoder().decode(content.Configuration as unknown as ArrayBuffer).replaceAll('!important', ''))]
+                     new TextDecoder().decode(content.Configuration as unknown as ArrayBuffer).replaceAll('!important', '')]
             })) || [])
 
 } 

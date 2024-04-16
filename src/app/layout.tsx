@@ -5,6 +5,7 @@ import './globals.css'
 import { GetAWSAppConfigWhitelabelProfiles } from '@/providers/remote-config/AWSAppConfig'
 import fs from 'fs'
 import { format } from 'date-fns'
+import { GetAWSFilesInCloudFrontBucket } from '@/providers/cloudfront/AWSCloudFrontConfig'
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
@@ -28,15 +29,15 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
 
-  const whitelabels = Object.entries(await GetAWSAppConfigWhitelabelProfiles());
+  const whitelabelsFromAppConfig = Object.entries(await GetAWSAppConfigWhitelabelProfiles());
  
-  whitelabels.forEach( ([key, value]) => {
+  whitelabelsFromAppConfig.forEach( ([key, value]) => {
     const whitelabel = key.split('.')[0]
-    fs.writeFileSync(`./public/themes/${whitelabel}.layout.css`, JSON.stringify(value) )
+    fs.writeFileSync(`./public/themes/_local_${whitelabel}.layout.css`, value as unknown as string)
   });
 
-  fs.writeFileSync('./public/themes/whitelabel.lastUpdate.json', JSON.stringify({ lastUpdate: format(new Date(), 'yyyy-MM-dd HH:mm:ss') }) )
- 
+  fs.writeFileSync('./public/themes/_local_appConfig_.lastUpdate.json', JSON.stringify({ lastUpdate: format(new Date(), 'yyyy-MM-dd HH:mm:ss') }) )
+
   return (
     <html className={inter.variable} lang="pt">
       <body className="bg-zinc-950 text-zinc-50 antialiased">{children}</body>
