@@ -7,7 +7,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    domains: ['github.com'],
+    domains: ['github.com', 'https://d2onhdkn7w90qy.cloudfront.net'],
   },
 }
 

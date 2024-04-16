@@ -3,15 +3,26 @@ export function getQueryParamsThroughUrl(url: string | undefined | null) {
 
   const queryParams: { [key: string]: string } = {}
 
-  const queryString = url.split('?')[1]
-  if (queryString) {
-    const regex = /([^&=]+)=([^&]*)/g
-    let match
-    while ((match = regex.exec(queryString)) !== null) {
-      const key = decodeURIComponent(match[1])
-      const value = decodeURIComponent(match[2])
+  // Removendo qualquer parte do URL antes da interrogação
+  const queryStringStartIndex = url.indexOf('?')
+  const queryString =
+    queryStringStartIndex !== -1 ? url.slice(queryStringStartIndex + 1) : ''
+
+  // Extraindo os parâmetros de consulta da parte restante do URL
+  const searchParams = new URLSearchParams(queryString)
+  searchParams.forEach((value, key) => {
+    queryParams[key] = value
+  })
+
+  // Verificando se há hashes na URL e extraindo os parâmetros de consulta do hash
+  const hashStartIndex = url.indexOf('#')
+  if (hashStartIndex !== -1) {
+    const hashString = url.slice(hashStartIndex + 1)
+    const hashParams = new URLSearchParams(hashString)
+    hashParams.forEach((value, key) => {
       queryParams[key] = value
-    }
+    })
   }
+
   return queryParams
 }

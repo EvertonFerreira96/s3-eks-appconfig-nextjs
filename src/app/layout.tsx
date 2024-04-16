@@ -5,7 +5,6 @@ import './globals.css'
 import { GetAWSAppConfigWhitelabelProfiles } from '@/providers/remote-config/AWSAppConfig'
 import fs from 'fs'
 import { format } from 'date-fns'
-import { GetAWSFilesInCloudFrontBucket } from '@/providers/cloudfront/AWSCloudFrontConfig'
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
