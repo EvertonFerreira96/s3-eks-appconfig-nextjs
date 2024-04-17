@@ -13,7 +13,7 @@ import Link from 'next/link'
 async function getFeaturedProducts(): Promise<Product[]> {
   const response = await api('/products/featured', {
     next: {
-      revalidate: 60 * 60, // 1 hour
+      revalidate: 3, // seconds
     },
   })
 
@@ -39,15 +39,11 @@ export default async function Home(request: any) {
       {
         method: 'GET',
         next: {
-          revalidate: 60 * 60, // 1 hour
+          revalidate: 3, // seconds
         },
       },
     )
   ).json()
-
-  console.log({
-    infos,
-  })
 
   return (
     <>
