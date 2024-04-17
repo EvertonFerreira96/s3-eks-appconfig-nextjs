@@ -15,7 +15,7 @@ export async function middleware(request: NextRequest) {
  
 
     const urlLocalWhitelabelFiles = new URL(`/themes/_${getFileProvider}_${domain}.layout.css`, request.url);
-    const urlCloudFrontFiles = new URL(`${params.aws.cloudFront.whitelabelCss}/${domain}.css`, request.url);
+    const urlCloudFrontFiles = new URL(`${params.aws.cloudFront.whitelabelCss.bucket}/${domain}.css`, request.url);
     return NextResponse.redirect(
         getFileProvider === 'local' 
         ? urlLocalWhitelabelFiles
